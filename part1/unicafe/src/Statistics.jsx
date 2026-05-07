@@ -1,6 +1,6 @@
-const Statistics = (props) => {
-  console.log(props);
+import StatisticLine from "./StatisticLine";
 
+const Statistics = (props) => {
   if (props.good + props.neutral + props.bad === 0) {
     return (
       <div>
@@ -13,15 +13,26 @@ const Statistics = (props) => {
   return (
     <div>
       <h1>statistics</h1>
-      <p>good {props.good}</p>
-      <p>neutral {props.neutral}</p>
-      <p>bad {props.bad}</p>
-      <p>all {props.good + props.neutral + props.bad}</p>
-      <p>
-        average{" "}
-        {(props.good - props.bad) / (props.good + props.neutral + props.bad)}
-      </p>
-      <p>positive {props.good / (props.good + props.neutral + props.bad)} %</p>
+      <StatisticLine text="good" value={props.good} units="" />
+      <StatisticLine text="neutral" value={props.neutral} units="" />
+      <StatisticLine text="bad" value={props.bad} units="" />
+      <StatisticLine
+        text="all"
+        value={props.good + props.neutral + props.bad}
+        units=""
+      />
+      <StatisticLine
+        text="average"
+        value={
+          (props.good - props.bad) / (props.good + props.neutral + props.bad)
+        }
+        units=""
+      />
+      <StatisticLine
+        text="positive"
+        value={props.good / (props.good + props.neutral + props.bad)}
+        units="%"
+      />
     </div>
   );
 };
