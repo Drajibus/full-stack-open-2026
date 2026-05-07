@@ -1,10 +1,11 @@
 const StatisticLine = (props) => {
   return (
-    <div>
-      <p>
-        {props.text} {props.value} {props.units}
-      </p>
-    </div>
+    <tr>
+      <td>{props.text}</td>
+      <td>
+        {props.value} {props.units}
+      </td>
+    </tr>
   );
 };
 
