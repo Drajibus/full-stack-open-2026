@@ -1,12 +1,11 @@
 import Part from "./Part.jsx";
 
-const Content = (props) => {
-  console.log(props);
+const Content = ({ parts }) => {
   return (
     <div>
-      <Part part={props.parts[0]} />
-      <Part part={props.parts[1]} />
-      <Part part={props.parts[2]} />
+      <Part part={parts[0]} />
+      <Part part={parts[1]} />
+      <Part part={parts[2]} />
     </div>
   );
 };

@@ -1,9 +1,8 @@
-const Part = (props) => {
-  console.log(props);
+const Part = ({ part }) => {
   return (
     <div>
       <p>
-        {props.part.name} {props.part.exercises}
+        {part.name} {part.exercises}
       </p>
     </div>
   );
