@@ -2,25 +2,24 @@ import { useState } from "react";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-1234567" },
+    { name: "Arto Hellas", number: "040-123456", id: 1 },
+    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
+    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
+    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
   ]);
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [filter, setFilter] = useState("");
 
   const addPerson = (event) => {
     event.preventDefault();
 
-    const alreadySavedName = persons.some((person) => person.name === newName);
-    const alreadySavedNumber = persons.some(
-      (person) => person.number === newNumber,
-    );
-
-    if (alreadySavedName) {
+    if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    if (alreadySavedNumber) {
+    if (persons.some((person) => person.number === newNumber)) {
       alert(`${newNumber} is already added to phonebook`);
       return;
     }
@@ -32,25 +31,37 @@ const App = () => {
     setNewNumber("");
   };
 
-  const handleNameChange = (event) => {
-    console.log(event.target.value);
-    setNewName(event.target.value);
-  };
-
-  const handleNumberChange = (event) => {
-    console.log(event.target.value);
-    setNewNumber(event.target.value);
-  };
+  const personsToShow =
+    filter === ""
+      ? persons
+      : persons.filter((person) =>
+          person.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()),
+        );
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        filter shown with
+        <input
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+        />
+      </div>
       <form onSubmit={addPerson}>
         <div>
-          name: <input value={newName} onChange={handleNameChange} />
+          name:{" "}
+          <input
+            value={newName}
+            onChange={(event) => setNewName(event.target.value)}
+          />
         </div>
         <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
+          number:{" "}
+          <input
+            value={newNumber}
+            onChange={(event) => setNewNumber(event.target.value)}
+          />
         </div>
         <div>
           <button type="submit">add</button>
@@ -58,7 +69,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <div>
-        {persons.map((person) => (
+        {personsToShow.map((person) => (
           <p key={person.name}>
             {person.name} {person.number}
           </p>
