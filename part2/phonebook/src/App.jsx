@@ -11,7 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
-  const [successAlert, setSuccessAlert] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -42,9 +42,22 @@ const App = () => {
             setNewNumber("");
           })
           .then(() => {
-            setSuccessAlert(`${newName} number modified`);
+            setNotification({
+              message: `${newName} number modified`,
+              notificationClass: "successAlert",
+            });
             setTimeout(() => {
-              setSuccessAlert(null);
+              setNotification(null);
+            }, 5000);
+          })
+          .catch(() => {
+            setNotification({
+              message: `Information of ${newName} has already been removed from server`,
+              notificationClass: "error", // Utilise ta classe rouge !
+            });
+            setPersons(persons.filter((person) => person.name !== newName));
+            setTimeout(() => {
+              setNotification(null);
             }, 5000);
           });
       }
@@ -67,9 +80,12 @@ const App = () => {
         setNewNumber("");
       })
       .then(() => {
-        setSuccessAlert(`Added ${newName}`);
+        setNotification({
+          message: `Added ${newName}`,
+          notificationClass: "successAlert",
+        });
         setTimeout(() => {
-          setSuccessAlert(null);
+          setNotification(null);
         }, 5000);
       });
   };
@@ -92,7 +108,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successAlert} />
+      <Notification notification={notification} />
       <div>
         <Filter
           value={filter}
