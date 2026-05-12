@@ -3,6 +3,7 @@ import personService from "./services/notes";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+// import axios from "axios";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -45,6 +46,14 @@ const App = () => {
           person.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()),
         );
 
+  const deletePerson = (id) => {
+    if (confirm(`Delete ${persons.find((person) => person.id === id).name}?`)) {
+      personService.deleteByID(id).then((deletedPerson) => {
+        setPersons(persons.filter((person) => person.id !== deletedPerson.id));
+      });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -63,7 +72,7 @@ const App = () => {
         numberOnChange={(event) => setNewNumber(event.target.value)}
       />
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} handleDelete={deletePerson} />
     </div>
   );
 };

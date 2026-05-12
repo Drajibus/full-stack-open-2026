@@ -1,12 +1,15 @@
-const Persons = (props) => {
+const Persons = ({ personsToShow, handleDelete }) => {
   // console.log(props);
 
   return (
     <div>
-      {props.personsToShow.map((person) => (
-        <p key={person.name}>
-          {person.name} {person.number}
-        </p>
+      {personsToShow.map((person) => (
+        <div key={person.id}>
+          <p>
+            {person.name} {person.number}{" "}
+            <button onClick={() => handleDelete(person.id)}>delete</button>
+          </p>
+        </div>
       ))}
     </div>
   );
