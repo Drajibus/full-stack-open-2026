@@ -3,6 +3,7 @@ import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [successAlert, setSuccessAlert] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -38,6 +40,12 @@ const App = () => {
             );
             setNewName("");
             setNewNumber("");
+          })
+          .then(() => {
+            setSuccessAlert(`${newName} number modified`);
+            setTimeout(() => {
+              setSuccessAlert(null);
+            }, 5000);
           });
       }
 
@@ -51,11 +59,19 @@ const App = () => {
 
     const personObject = { name: newName, number: newNumber };
 
-    personService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-    });
+    personService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+      })
+      .then(() => {
+        setSuccessAlert(`Added ${newName}`);
+        setTimeout(() => {
+          setSuccessAlert(null);
+        }, 5000);
+      });
   };
 
   const personsToShow =
@@ -76,6 +92,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successAlert} />
       <div>
         <Filter
           value={filter}
