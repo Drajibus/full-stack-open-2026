@@ -3,7 +3,7 @@ import personService from "./services/notes";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-// import axios from "axios";
+import axios from "axios";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -22,7 +22,27 @@ const App = () => {
     event.preventDefault();
 
     if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+      const confirmationMsg = `${newName} is already added to phonebook, replace the old number with a new one?`;
+      if (confirm(confirmationMsg)) {
+        const existingPerson = persons.find(
+          (person) => person.name === newName,
+        );
+        const updatedPerson = { ...existingPerson, number: newNumber };
+        axios
+          .put(
+            `http://localhost:3001/persons/${existingPerson.id}`,
+            updatedPerson,
+          )
+          .then((response) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === response.data.id ? response.data : person,
+              ),
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+      }
       return;
     }
     if (persons.some((person) => person.number === newNumber)) {
