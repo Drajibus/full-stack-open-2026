@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import personService from "./services/notes";
+import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -28,23 +27,23 @@ const App = () => {
           (person) => person.name === newName,
         );
         const updatedPerson = { ...existingPerson, number: newNumber };
-        axios
-          .put(
-            `http://localhost:3001/persons/${existingPerson.id}`,
-            updatedPerson,
-          )
-          .then((response) => {
+
+        personService
+          .update(existingPerson.id, updatedPerson)
+          .then((returnedPerson) => {
             setPersons(
               persons.map((person) =>
-                person.id === response.data.id ? response.data : person,
+                person.id === returnedPerson.id ? returnedPerson : person,
               ),
             );
             setNewName("");
             setNewNumber("");
           });
       }
+
       return;
     }
+
     if (persons.some((person) => person.number === newNumber)) {
       alert(`${newNumber} is already added to phonebook`);
       return;
