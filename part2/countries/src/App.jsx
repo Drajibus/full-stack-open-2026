@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import CountryInfos from "./components/CountryInfos";
+import CountryList from "./components/CountryList";
 
 function App() {
   const [searchField, setSearchField] = useState("");
@@ -19,13 +20,6 @@ function App() {
   const filteredCountries = countryNames.filter((c) =>
     c.toLowerCase().includes(searchField.toLowerCase()),
   );
-
-  const countriesToShow =
-    filteredCountries.length > 10
-      ? ["Too many matches, specify another filter"]
-      : filteredCountries.length > 1
-        ? filteredCountries
-        : [];
 
   useEffect(() => {
     const filtered = countryNames.filter((c) =>
@@ -53,7 +47,20 @@ function App() {
     } else {
       setShowcasedCountry(null);
     }
-  }, [searchField, countryNames, showcasedCountry]);
+  }, [searchField, countryNames]);
+
+  const handleClick = (country) => {
+    console.log(`Clicked on ${country}`);
+    console.log("GET Country");
+    axios
+      .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${country}`)
+      .then((response) => {
+        const returnedObject = response.data;
+        console.log("API returned: ");
+        console.log(returnedObject);
+        setShowcasedCountry(response.data);
+      });
+  };
 
   return (
     <div>
@@ -61,14 +68,17 @@ function App() {
         find countries{" "}
         <input
           value={searchField}
-          onChange={(event) => setSearchField(event.target.value)}
+          onChange={(e) => setSearchField(e.target.value)}
         ></input>
       </div>
-      <div>
+      {/* <div>
         {countriesToShow.map((c) => (
-          <p key={c}>{c}</p>
+          <p key={c}>
+            {c} <button>Show</button>
+          </p>
         ))}
-      </div>
+      </div> */}
+      <CountryList countryList={filteredCountries} onClick={handleClick} />
       <CountryInfos countryData={showcasedCountry} />
     </div>
   );
