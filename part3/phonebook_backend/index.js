@@ -11,6 +11,7 @@ morgan.token("posted_data", function getPostedData(req) {
 });
 
 app.use(express.json());
+app.use(express.static("dist"));
 app.use(
   morgan(
     ":method :url :status :res[content-length] - :response-time ms :posted_data",
