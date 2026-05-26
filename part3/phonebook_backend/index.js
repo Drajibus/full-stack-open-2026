@@ -76,6 +76,7 @@ app.get("/api/persons", (request, response) => {
 //   response.status(204).end();
 // });
 
+//Errors are not taken account for now
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
