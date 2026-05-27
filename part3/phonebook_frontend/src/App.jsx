@@ -99,8 +99,8 @@ const App = () => {
 
   const deletePerson = (id) => {
     if (confirm(`Delete ${persons.find((person) => person.id === id).name}?`)) {
-      personService.deleteByID(id).then((deletedPerson) => {
-        setPersons(persons.filter((person) => person.id !== deletedPerson.id));
+      personService.deleteByID(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
       });
     }
   };
