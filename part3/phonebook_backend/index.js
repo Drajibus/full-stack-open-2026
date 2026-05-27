@@ -28,7 +28,6 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-//Next step
 app.get("/info", (request, response, next) => {
   const now = new Date();
   Person.countDocuments({})
@@ -53,8 +52,6 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 app.put("/api/persons/:id", (request, response, next) => {
   const { name, number } = request.body;
-
-  console.log("used PUT!");
 
   Person.findById(request.params.id)
     .then((person) => {
@@ -82,8 +79,6 @@ app.delete("/api/persons/:id", (request, response, next) => {
 
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
-
-  console.log("used POST!");
 
   if (!body.name) {
     return response.status(400).json({
