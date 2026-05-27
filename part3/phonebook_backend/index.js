@@ -28,11 +28,15 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-//Next ste^p
-app.get("/info", (request, response) => {
+//Next step
+app.get("/info", (request, response, next) => {
   const now = new Date();
-  const content = `<p>Phonebook has info for ${persons.length} people</p><p>${now}</p>`;
-  response.send(content);
+  Person.countDocuments({})
+    .then((count) => {
+      const content = `<p>Phonebook has info for ${count} people</p><p>${now}</p>`;
+      response.send(content);
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/api/persons/:id", (request, response, next) => {
