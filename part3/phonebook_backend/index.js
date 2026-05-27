@@ -28,11 +28,12 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-// app.get("/info", (request, response) => {
-//   const now = new Date();
-//   const content = `<p>Phonebook has info for ${persons.length} people</p><p>${now}</p>`;
-//   response.send(content);
-// });
+//Next ste^p
+app.get("/info", (request, response) => {
+  const now = new Date();
+  const content = `<p>Phonebook has info for ${persons.length} people</p><p>${now}</p>`;
+  response.send(content);
+});
 
 app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id)
