@@ -30,6 +30,7 @@ const App = () => {
         );
         const updatedPerson = { ...existingPerson, number: newNumber };
 
+        //TODO: manage backend validation error on update
         personService
           .update(existingPerson.id, updatedPerson)
           .then((returnedPerson) => {
@@ -83,6 +84,15 @@ const App = () => {
         setNotification({
           message: `Added ${newName}`,
           notificationClass: "successAlert",
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        setNotification({
+          message: error.response.data.error,
+          notificationClass: "error",
         });
         setTimeout(() => {
           setNotification(null);
