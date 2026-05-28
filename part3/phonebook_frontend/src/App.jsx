@@ -30,7 +30,6 @@ const App = () => {
         );
         const updatedPerson = { ...existingPerson, number: newNumber };
 
-        //TODO: manage backend validation error on update
         personService
           .update(existingPerson.id, updatedPerson)
           .then((returnedPerson) => {
