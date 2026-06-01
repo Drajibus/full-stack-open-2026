@@ -50,12 +50,19 @@ const App = () => {
               setNotification(null);
             }, 5000);
           })
-          .catch(() => {
+          .catch((error) => {
             setNotification({
-              message: `Information of ${newName} has already been removed from server`,
-              notificationClass: "error", // Utilise ta classe rouge !
+              message:
+                error.response?.data?.error || "an error occured when updating",
+              notificationClass: "error",
             });
-            setPersons(persons.filter((person) => person.name !== newName));
+            if (error.response?.status === 404) {
+              setNotification({
+                message: `Information of ${newName} has already been removed from server`,
+                notificationClass: "error",
+              });
+              setPersons(persons.filter((person) => person.name !== newName));
+            }
             setTimeout(() => {
               setNotification(null);
             }, 5000);
