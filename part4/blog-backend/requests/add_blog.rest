@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "React v19: What is New and How to Upgrade",
+    "author": "Dan Abramov",
+    "url": "https://react.dev/blog/2024/12/05/react-19",
+    "likes": 128
+}
