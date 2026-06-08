@@ -136,3 +136,53 @@ describe('author with most blogs', () => {
     })
   })
 })
+
+describe('most liked blog', () => {
+
+  test('of empty list is null', () => {
+    const result = listHelper.favoriteBlog([])
+    expect(result).toBeNull()
+  })
+
+  test('when list has only one blog, the found favorite is right', () => {
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    expect(result).toEqual({
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    })
+  })
+
+  test('of a bigger list is found right', () => {
+    const result = listHelper.favoriteBlog(blogs)
+    expect(result).toEqual({
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      likes: 12,
+    })
+  })
+})
+
+describe('author with most likes', () => {
+
+  test('of an empty blog list is null', () => {
+    const result = listHelper.mostLikes([])
+    expect(result).toBeNull()
+  })
+
+  test('when list has only one blog, is the only author of the list with unique blog likes', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    })
+  })
+
+  test('of a bigger list is found right with the correct number of total likes', () => {
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    })
+  })
+})
