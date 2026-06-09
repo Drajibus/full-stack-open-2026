@@ -64,6 +64,32 @@ test('blog without likes is added with 0 likes', async () => {
   expect(response.body.likes).toBe(0)
 })
 
+test('blog without title causes 400 Bad Request', async () => {
+  const newBlog = {
+    author: 'Alan Turing',
+    url: 'https://mind.oxfordjournals.org/content/LIX/236/433.full.pdf',
+    likes: 42
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test('blog without url causes 400 Bad Request', async () => {
+  const newBlog = {
+    title: 'Computing Machinery and Intelligence',
+    author: 'Alan Turing',
+    likes: 42
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
