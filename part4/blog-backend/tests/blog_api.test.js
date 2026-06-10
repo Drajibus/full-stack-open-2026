@@ -95,7 +95,7 @@ test('a blog can be deleted', async () => {
   const blogToDelete = blogsAtStart[0]
 
   await api
-    .delete(`/api/notes/${blogToDelete.id}`)
+    .delete(`/api/blogs/${blogToDelete.id}`)
     .expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
