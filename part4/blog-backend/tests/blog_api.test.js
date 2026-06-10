@@ -90,6 +90,25 @@ test('blog without url causes 400 Bad Request', async () => {
     .expect(400)
 })
 
+test('a blog can be deleted', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api
+    .delete(`/api/notes/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(
+    helper.initialBlogs.length - 1
+  )
+
+  const titles = blogsAtEnd.map(r => r.title)
+
+  expect(titles).not.toContain(blogToDelete.title)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
