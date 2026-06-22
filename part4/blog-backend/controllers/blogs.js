@@ -13,14 +13,13 @@ blogsRouter.post('/', async (request, response) => {
 
   const token = request.token
   const decodedToken = token ? jwt.verify(token, process.env.SECRET) : null
-
   if (!decodedToken || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
-  const user = await User.findById(decodedToken.id)
 
+  const user = await User.findById(decodedToken.id)
   if (!user){
-    return response.status(400).json({ error: 'random user not found' })
+    return response.status(400).json({ error: 'user not found' })
   }
 
   const blog = new Blog({
@@ -38,11 +37,27 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const deleted = await Blog.findByIdAndDelete(request.params.id)
-
-  if (!deleted) {
-    return response.status(404).end()
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
   }
+
+  const token = request.token
+  const decodedToken = token ? jwt.verify(token, process.env.SECRET) : null
+  if (!decodedToken || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  const user = await User.findById(decodedToken.id)
+  if (!user){
+    return response.status(400).json({ error: 'user not found' })
+  }
+
+  if(blog.user.toString() !== user._id.toString()){
+    return response.status(401).json({ error: 'user is not authorised to delete the ressource' })
+  }
+
+  await blog.deleteOne()
 
   response.status(204).end()
 })
