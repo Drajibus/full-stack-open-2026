@@ -3,13 +3,33 @@ const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcryptjs')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+let token
 
 beforeEach(async () => {
+  await User.deleteMany({})
   await Blog.deleteMany({})
-  const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
+
+  const passwordHash = await bcrypt.hash('testpassword', 10)
+  const initialUser = new User({
+    username: 'jestersupertester',
+    name: 'Jester Supertest',
+    passwordHash
+  })
+  const returnedUser = await initialUser.save()
+
+  const blogObjects = helper.initialBlogs.map(blog => new Blog({ ...blog, user: returnedUser._id }))
   const promiseArray = blogObjects.map(blog => blog.save())
   await Promise.all(promiseArray)
+
+  const loginResponse = await api
+    .post('/api/login')
+    .send({ username: 'jestersupertester', password: 'testpassword' })
+
+  token = loginResponse.body.token
 })
 
 test('blogs are returned as json', async () => {
@@ -26,7 +46,7 @@ test('returned blogs have a property id and not _id', async () => {
   expect(response.body[0].id).toBeDefined()
 })
 
-test('a blog can be added', async () => {
+test('a blog can be added by a user', async () => {
   const newBlog = {
     title: 'Canonical string reduction',
     author: 'Edsger W. Dijkstra',
@@ -36,6 +56,7 @@ test('a blog can be added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -47,6 +68,24 @@ test('a blog can be added', async () => {
   expect(titles).toContain('Canonical string reduction')
 })
 
+test('a blog fails to be added if no token provided', async () => {
+  const newBlog = {
+    title: 'Programming is great',
+    author: 'Someone happy to code',
+    url: 'http://a-website.com',
+    likes: 3
+  }
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', 'Bearer')
+    .send(newBlog)
+    .expect(401)
+
+  const response = await api.get('/api/blogs')
+  expect(response.body).toHaveLength(helper.initialBlogs.length)
+})
+
 test('blog without likes is added with 0 likes', async () => {
   const newBlog = {
     title: 'Type Systems and Programming Languages',
@@ -56,6 +95,7 @@ test('blog without likes is added with 0 likes', async () => {
 
   const response = await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -73,6 +113,7 @@ test('blog without title causes 400 Bad Request', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 })
@@ -86,6 +127,7 @@ test('blog without url causes 400 Bad Request', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 })
@@ -96,6 +138,7 @@ test('a blog can be deleted', async () => {
 
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `Bearer ${token}`)
     .expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
