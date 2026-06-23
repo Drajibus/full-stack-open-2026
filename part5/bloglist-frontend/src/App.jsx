@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,7 @@ const App = () => {
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -29,16 +31,28 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await loginService.login({ username, password })
+
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
+
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch {
-      // setErrorMessage('wrong credentials')
-      console.error('Wrong credentials')
+
+      setNotification({
+        message: `Connected as ${user.username}`,
+        notificationClass: 'successAlert',
+      })
       setTimeout(() => {
-        // setErrorMessage(null)
+        setNotification(null)
+      }, 5000)
+    } catch {
+      setNotification({
+        message: 'Wrong username or password',
+        notificationClass: 'error',
+      })
+      setTimeout(() => {
+        setNotification(null)
       }, 5000)
     }
   }
@@ -46,6 +60,13 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
+    setNotification({
+      message: `Successfully logged out`,
+      notificationClass: 'successAlert',
+    })
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
 
   const handleCreateBlog = async (event) => {
@@ -62,14 +83,29 @@ const App = () => {
       setNewBlogTitle('')
       setNewBlogAuthor('')
       setNewBlogUrl('')
+
+      setNotification({
+        message: `New blog created! ${returnedBlog.title} by ${returnedBlog.author}`,
+        notificationClass: 'successAlert',
+      })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     } catch {
-      console.error('Failed to create a new blog')
+      setNotification({
+        message: 'Failed to create new blog',
+        notificationClass: 'error',
+      })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     }
   }
 
   if (user === null) {
     return (
       <div>
+        <Notification notification={notification} />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -100,6 +136,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification notification={notification} />
       <h2>Blogs</h2>
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
