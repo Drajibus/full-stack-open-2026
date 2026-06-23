@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2YTMzZmExYWM2ODc0OWNjOTk2NTQ0Y2EiLCJpYXQiOjE3ODIxMjEzMjd9.Rhv9jRDhh9oxMwZR1i4F1ouWmL-eryYdYHRH9RNulYg
+
+{
+    "title": "Jazz is great",
+    "author": "Anonymous",
+    "url": "no url",
+    "likes": 54
+}
