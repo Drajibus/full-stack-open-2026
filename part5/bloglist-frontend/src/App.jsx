@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react'
+
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
+import CreateForm from './components/CreateForm'
+import Togglable from './components/Togglable'
+
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -14,7 +18,6 @@ const App = () => {
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
   const [notification, setNotification] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -104,29 +107,6 @@ const App = () => {
     }
   }
 
-  const loginForm = () => {
-    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-    const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div>
       <Notification notification={notification} />
@@ -134,48 +114,34 @@ const App = () => {
       <h1>Blog list application</h1>
 
       {user === null ? (
-        loginForm()
+        <Togglable buttonLabel='log in'>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+        </Togglable>
       ) : (
         <div>
           <p>
             {user.name} logged in <button onClick={handleLogout}>logout</button>
           </p>
 
-          <h2>Create new</h2>
-
-          <form onSubmit={handleCreateBlog}>
-            <div>
-              <label>
-                title
-                <input
-                  type='text'
-                  value={newBlogTitle}
-                  onChange={({ target }) => setNewBlogTitle(target.value)}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                author
-                <input
-                  type='text'
-                  value={newBlogAuthor}
-                  onChange={({ target }) => setNewBlogAuthor(target.value)}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                url
-                <input
-                  type='url'
-                  value={newBlogUrl}
-                  onChange={({ target }) => setNewBlogUrl(target.value)}
-                />
-              </label>
-            </div>
-            <button type='submit'>create</button>
-          </form>
+          <Togglable buttonLabel='create blog'>
+            <CreateForm
+              handleSubmit={handleCreateBlog}
+              title={newBlogTitle}
+              author={newBlogAuthor}
+              url={newBlogUrl}
+              handleTitleChange={({ target }) => setNewBlogTitle(target.value)}
+              handleAuthorChange={({ target }) =>
+                setNewBlogAuthor(target.value)
+              }
+              handleUrlChange={({ target }) => setNewBlogUrl(target.value)}
+            />
+          </Togglable>
         </div>
       )}
 
