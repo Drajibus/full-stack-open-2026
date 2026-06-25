@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -14,10 +14,9 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
   const [notification, setNotification] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -74,20 +73,13 @@ const App = () => {
     }, 5000)
   }
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
+  const addBlog = async (blogObject) => {
     try {
-      const returnedBlog = await blogService.create({
-        title: newBlogTitle,
-        author: newBlogAuthor,
-        url: newBlogUrl,
-      })
+      const returnedBlog = await blogService.create(blogObject)
 
       setBlogs(blogs.concat(returnedBlog))
 
-      setNewBlogTitle('')
-      setNewBlogAuthor('')
-      setNewBlogUrl('')
+      blogFormRef.current.toggleVisibility()
 
       setNotification({
         message: `New blog created! ${returnedBlog.title} by ${returnedBlog.author}`,
@@ -129,18 +121,8 @@ const App = () => {
             {user.name} logged in <button onClick={handleLogout}>logout</button>
           </p>
 
-          <Togglable buttonLabel='create blog'>
-            <CreateForm
-              handleSubmit={handleCreateBlog}
-              title={newBlogTitle}
-              author={newBlogAuthor}
-              url={newBlogUrl}
-              handleTitleChange={({ target }) => setNewBlogTitle(target.value)}
-              handleAuthorChange={({ target }) =>
-                setNewBlogAuthor(target.value)
-              }
-              handleUrlChange={({ target }) => setNewBlogUrl(target.value)}
-            />
+          <Togglable buttonLabel='create blog' ref={blogFormRef}>
+            <CreateForm createBlog={addBlog} />
           </Togglable>
         </div>
       )}
