@@ -20,6 +20,7 @@ const Blog = ({ blog, updateLikes }) => {
           likes {blog.likes}{' '}
           <button onClick={() => updateLikes(blog)}>like</button>
         </div>
+        <div>{blog.user.name}</div>
       </Togglable>
     </div>
   )
