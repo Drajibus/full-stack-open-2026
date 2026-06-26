@@ -15,7 +15,9 @@ const Blog = ({ blog, updateLikes }) => {
         {blog.title} by <em>{blog.author}</em>
       </div>
       <Togglable buttonLabel1='view' buttonLabel2='hide'>
-        <div>{blog.url}</div>
+        <div>
+          <a href={blog.url}>{blog.url}</a>
+        </div>
         <div>
           likes {blog.likes}{' '}
           <button onClick={() => updateLikes(blog)}>like</button>
