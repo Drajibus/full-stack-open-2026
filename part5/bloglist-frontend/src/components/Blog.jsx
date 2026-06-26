@@ -1,6 +1,6 @@
 import Togglable from './Togglable'
 
-const Blog = ({ blog, updateLikes }) => {
+const Blog = ({ blog, updateLikes, removeBlog, showDeleteButton }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -23,6 +23,9 @@ const Blog = ({ blog, updateLikes }) => {
           <button onClick={() => updateLikes(blog)}>like</button>
         </div>
         <div>{blog.user.name}</div>
+        {showDeleteButton && (
+          <button onClick={() => removeBlog(blog)}>remove</button>
+        )}
       </Togglable>
     </div>
   )

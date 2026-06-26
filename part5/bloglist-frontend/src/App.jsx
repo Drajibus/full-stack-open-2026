@@ -110,7 +110,23 @@ const App = () => {
 
       setBlogs(blogs.map((b) => (b.id === blogObject.id ? returnedBlog : b)))
     } catch {
-      console.log('error')
+      console.log('Adding like to blog failed')
+    }
+  }
+
+  const removeBlog = async (blogObject) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete your blog ${blogObject.title} by ${blogObject.author} ?`
+      )
+    ) {
+      try {
+        await blogService.remove(blogObject.id)
+
+        setBlogs(blogs.filter((b) => b.id !== blogObject.id))
+      } catch {
+        console.log('Removing blog failed')
+      }
     }
   }
 
@@ -151,9 +167,20 @@ const App = () => {
       {blogs
         .slice()
         .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog key={blog.id} blog={blog} updateLikes={updateLikes} />
-        ))}
+        .map((blog) => {
+          console.log(user)
+
+          const isOwner = user && blog.user.username === user.username
+          return (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              updateLikes={updateLikes}
+              removeBlog={removeBlog}
+              showDeleteButton={isOwner}
+            />
+          )
+        })}
     </div>
   )
 }
