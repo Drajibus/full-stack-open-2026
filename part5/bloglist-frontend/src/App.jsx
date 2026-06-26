@@ -65,7 +65,7 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
     setNotification({
-      message: `Successfully logged out`,
+      message: 'Successfully logged out',
       notificationClass: 'successAlert',
     })
     setTimeout(() => {
@@ -168,8 +168,6 @@ const App = () => {
         .slice()
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => {
-          console.log(user)
-
           const isOwner = user && blog.user.username === user.username
           return (
             <Blog
