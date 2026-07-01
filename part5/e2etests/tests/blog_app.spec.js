@@ -69,5 +69,31 @@ describe("Blog app", () => {
 
       await expect(textAfter).toContainText("likes 1");
     });
+
+    test("a blog can be deleted by its creator", async ({ page }) => {
+      await createBlog(
+        page,
+        "a new blog can be created then deleted",
+        "Playwright PW",
+        "http://its-a-test.com",
+      );
+
+      const blogDiv = page.locator("div").filter({
+        hasText: "a new blog can be created then deleted",
+        hasNotText: "New blog created!",
+      });
+
+      await blogDiv.getByRole("button", { name: "view" }).click();
+
+      page.on("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+
+      await blogDiv.getByRole("button", { name: "remove" }).click();
+
+      await expect(
+        page.getByText("Playwright PW", { exact: true }),
+      ).not.toBeVisible();
+    });
   });
 });
