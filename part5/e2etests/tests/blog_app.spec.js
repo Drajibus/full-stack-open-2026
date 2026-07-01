@@ -122,5 +122,122 @@ describe("Blog app", () => {
         blogDiv.getByRole("button", { name: "remove" }),
       ).not.toBeVisible();
     });
+
+    test("blogs are sorted by desc like numbers", async ({ page }) => {
+      await createBlog(
+        page,
+        "First in order",
+        "Playwright first",
+        "http://its-a-test.com",
+      );
+      await createBlog(
+        page,
+        "Second in order",
+        "Playwright second",
+        "http://its-a-test.com",
+      );
+      await createBlog(
+        page,
+        "Last in order",
+        "Playwright last",
+        "http://its-a-test.com",
+      );
+
+      await page
+        .locator("div")
+        .filter({
+          hasText: "First in order",
+          hasNotText: "New blog created!",
+        })
+        .getByRole("button", { name: "view" })
+        .click();
+
+      await page
+        .locator("div")
+        .filter({
+          hasText: "Second in order",
+          hasNotText: "New blog created!",
+        })
+        .getByRole("button", { name: "view" })
+        .click();
+
+      await page
+        .locator("div")
+        .filter({
+          hasText: "Last in order",
+          hasNotText: "New blog created!",
+        })
+        .getByRole("button", { name: "view" })
+        .click();
+
+      await page
+        .locator("div")
+        .filter({
+          hasText: "First in order",
+          hasNotText: "New blog created!",
+        })
+        .getByRole("button", { name: "like" })
+        .click();
+      await expect(
+        page
+          .locator("div")
+          .filter({
+            hasText: "First in order",
+            hasNotText: "New blog created!",
+          })
+          .getByText("likes 1"),
+      ).toBeVisible();
+
+      await page
+        .locator("div")
+        .filter({
+          hasText: "Second in order",
+          hasNotText: "New blog created!",
+        })
+        .getByRole("button", { name: "like" })
+        .click();
+      await expect(
+        page
+          .locator("div")
+          .filter({
+            hasText: "Second in order",
+            hasNotText: "New blog created!",
+          })
+          .getByText("likes 1"),
+      ).toBeVisible();
+
+      await page
+        .locator("div")
+        .filter({
+          hasText: "First in order",
+          hasNotText: "New blog created!",
+        })
+        .getByRole("button", { name: "like" })
+        .click();
+      await expect(
+        page
+          .locator("div")
+          .filter({
+            hasText: "First in order",
+            hasNotText: "New blog created!",
+          })
+          .getByText("likes 2"),
+      ).toBeVisible();
+
+      const blogs = page.locator(".blog");
+
+      await expect(blogs.first()).toContainText("First in order");
+      await expect(blogs.last()).toContainText("Last in order");
+
+      const expectedLikes = ["likes 2", "likes 1", "likes 0"];
+      for (let index = 0; index < 3; index++) {
+        const blog = blogs.nth(index);
+        const likesDiv = await blog
+          .getByRole("button", { name: "like" })
+          .locator("..");
+
+        await expect(likesDiv).toContainText(expectedLikes[index]);
+      }
+    });
   });
 });
