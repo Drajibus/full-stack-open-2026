@@ -95,5 +95,32 @@ describe("Blog app", () => {
         page.getByText("Playwright PW", { exact: true }),
       ).not.toBeVisible();
     });
+
+    test("one blog delete button is not available except for the creator", async ({
+      page,
+    }) => {
+      await createBlog(
+        page,
+        "delete button not available",
+        "Playwright Pw",
+        "http://its-a-test.com",
+      );
+      await expect(
+        page.getByText("Playwright Pw", { exact: true }),
+      ).toBeVisible();
+
+      await page.getByRole("button", { name: "logout" }).click();
+
+      const blogDiv = page.locator("div").filter({
+        hasText: "delete button not available",
+        hasNotText: "New blog created!",
+      });
+
+      await blogDiv.getByRole("button", { name: "view" }).click();
+
+      await expect(
+        blogDiv.getByRole("button", { name: "remove" }),
+      ).not.toBeVisible();
+    });
   });
 });
