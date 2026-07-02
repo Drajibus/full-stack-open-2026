@@ -4,7 +4,7 @@ import Blog from './Blog'
 const BlogList = ({ blogs }) => {
   return (
     <div>
-      <h2>Blogs</h2>
+      <h1>Blogs</h1>
       <ul>
         {blogs
           .slice()

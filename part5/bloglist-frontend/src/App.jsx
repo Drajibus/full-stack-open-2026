@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
@@ -20,8 +20,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
 
-  const blogFormRef = useRef()
-
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
@@ -35,9 +33,7 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    // A voir si je peux l'enlever ? il est déjà appliqué dans LoginForm
-    event.preventDefault()
+  const handleLogin = async () => {
     try {
       const user = await loginService.login({ username, password })
 
@@ -86,8 +82,6 @@ const App = () => {
 
       setBlogs(blogs.concat(returnedBlog))
 
-      blogFormRef.current.toggleVisibility()
-
       setNotification({
         message: `New blog created! ${returnedBlog.title} by ${returnedBlog.author}`,
         notificationClass: 'successAlert',
@@ -95,7 +89,7 @@ const App = () => {
       setTimeout(() => {
         setNotification(null)
       }, 5000)
-    } catch {
+    } catch (exception) {
       setNotification({
         message: 'Failed to create new blog',
         notificationClass: 'error',
@@ -103,6 +97,8 @@ const App = () => {
       setTimeout(() => {
         setNotification(null)
       }, 5000)
+
+      throw exception
     }
   }
 
@@ -144,12 +140,18 @@ const App = () => {
         <Link style={{ padding: '0px 5px' }} to='/'>
           blogs
         </Link>
+
         {user === null ? (
           <Link style={{ padding: '5 px' }} to='/login'>
             login
           </Link>
         ) : (
-          <button onClick={handleLogout}>logout</button>
+          <>
+            <Link style={{ padding: '0px 5px' }} to='/add'>
+              new blog
+            </Link>
+            <button onClick={handleLogout}>logout</button>
+          </>
         )}
       </div>
       <Routes>
@@ -186,6 +188,10 @@ const App = () => {
               handleSubmit={handleLogin}
             />
           }
+        ></Route>
+        <Route
+          path='/add'
+          element={<CreateForm createBlog={addBlog} user={user} />}
         ></Route>
       </Routes>
     </Router>
