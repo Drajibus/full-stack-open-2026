@@ -1,5 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+} from 'react-router-dom'
+
+import BlogList from './components/BlogList'
+
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
@@ -50,7 +60,7 @@ const App = () => {
       setTimeout(() => {
         setNotification(null)
       }, 5000)
-    } catch {
+    } catch (exception) {
       setNotification({
         message: 'Wrong username or password',
         notificationClass: 'error',
@@ -58,6 +68,8 @@ const App = () => {
       setTimeout(() => {
         setNotification(null)
       }, 5000)
+
+      throw exception
     }
   }
 
@@ -131,56 +143,98 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Notification notification={notification} />
-
-      <h1>Blog list application</h1>
-
-      {user === null ? (
-        <Togglable buttonLabel1='log in' buttonLabel2='cancel'>
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-        </Togglable>
-      ) : (
-        <div>
-          <p>
-            {user.name} logged in <button onClick={handleLogout}>logout</button>
-          </p>
-
-          <Togglable
-            buttonLabel1='create new blog'
-            buttonLabel2='cancel'
-            ref={blogFormRef}
-          >
-            <CreateForm createBlog={addBlog} />
-          </Togglable>
-        </div>
-      )}
-
-      <h2>Blogs</h2>
-
-      {blogs
-        .slice()
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => {
-          const isOwner = user && blog.user.username === user.username
-          return (
-            <Blog
-              key={blog.id}
-              blog={blog}
+    <Router>
+      <div>
+        <Link style={{ padding: '0px 5px' }} to='/'>
+          blogs
+        </Link>
+        {user === null ? (
+          <Link style={{ padding: '5 px' }} to='/login'>
+            login
+          </Link>
+        ) : (
+          <button onClick={handleLogout}>logout</button>
+        )}
+      </div>
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <BlogList
+              blogs={blogs}
+              user={user}
               updateLikes={updateLikes}
               removeBlog={removeBlog}
-              showDeleteButton={isOwner}
             />
-          )
-        })}
-    </div>
+          }
+        ></Route>
+        <Route
+          path='/login'
+          element={
+            <LoginForm
+              username={username}
+              password={password}
+              handleUsernameChange={({ target }) => setUsername(target.value)}
+              handlePasswordChange={({ target }) => setPassword(target.value)}
+              handleSubmit={handleLogin}
+            />
+          }
+        ></Route>
+      </Routes>
+    </Router>
   )
+
+  // return (
+  //   <div>
+  //     <Notification notification={notification} />
+
+  //     <h1>Blog list application</h1>
+
+  //     {user === null ? (
+  //       <Togglable buttonLabel1='log in' buttonLabel2='cancel'>
+  //         <LoginForm
+  //           username={username}
+  //           password={password}
+  //           handleUsernameChange={({ target }) => setUsername(target.value)}
+  //           handlePasswordChange={({ target }) => setPassword(target.value)}
+  //           handleSubmit={handleLogin}
+  //         />
+  //       </Togglable>
+  //     ) : (
+  //       <div>
+  //         <p>
+  //           {user.name} logged in <button onClick={handleLogout}>logout</button>
+  //         </p>
+
+  //         <Togglable
+  //           buttonLabel1='create new blog'
+  //           buttonLabel2='cancel'
+  //           ref={blogFormRef}
+  //         >
+  //           <CreateForm createBlog={addBlog} />
+  //         </Togglable>
+  //       </div>
+  //     )}
+
+  //     <h2>Blogs</h2>
+
+  //     {blogs
+  //       .slice()
+  //       .sort((a, b) => b.likes - a.likes)
+  //       .map((blog) => {
+  //         const isOwner = user && blog.user.username === user.username
+  //         return (
+  //           <Blog
+  //             key={blog.id}
+  //             blog={blog}
+  //             updateLikes={updateLikes}
+  //             removeBlog={removeBlog}
+  //             showDeleteButton={isOwner}
+  //           />
+  //         )
+  //       })}
+  //   </div>
+  // )
 }
 
 export default App

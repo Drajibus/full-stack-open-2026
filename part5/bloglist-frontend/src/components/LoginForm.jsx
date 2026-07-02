@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 const LoginForm = ({
   handleSubmit,
   handleUsernameChange,
@@ -5,10 +7,23 @@ const LoginForm = ({
   username,
   password,
 }) => {
+  const navigate = useNavigate()
+
+  const handleSubmitAndNavigate = async (event) => {
+    event.preventDefault()
+
+    try {
+      await handleSubmit(event)
+      navigate('/')
+    } catch (error) {
+      console.error('Login and navigation failed', error)
+    }
+  }
+
   return (
     <div>
       <h2>Log in to application</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmitAndNavigate}>
         <div>
           <label>
             username
