@@ -1,32 +1,50 @@
+import { useParams, useNavigate } from 'react-router-dom'
 import Togglable from './Togglable'
 
-const Blog = ({ blog, updateLikes, removeBlog, showDeleteButton }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
+const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
+  const navigate = useNavigate()
+
+  const id = useParams().id
+  const blog = blogs.find((b) => b.id === id)
+
+  if (!blog) {
+    return <p>blog not found</p>
+  }
+
+  const isOwner = user && blog.user.username === user.username
+  // console.log(user, blog.user.username, user.username)
+
+  const handleRemoveAndNavigate = async (event) => {
+    event.preventDefault()
+
+    try {
+      await removeBlog(blog)
+      navigate('/')
+    } catch (error) {
+      console.error('Removing blog and navigation failed', error)
+    }
   }
 
   return (
-    <div style={blogStyle} className='blog'>
+    <div className='blog'>
       <div>
-        {blog.title} by <em>{blog.author}</em>
+        <h1>
+          {blog.title} by <em>{blog.author}</em>
+        </h1>
       </div>
-      <Togglable buttonLabel1='view' buttonLabel2='hide'>
-        <div>
-          <a href={blog.url}>{blog.url}</a>
-        </div>
-        <div>
-          likes {blog.likes}{' '}
-          <button onClick={() => updateLikes(blog)}>like</button>
-        </div>
-        <div>{blog.user.name}</div>
-        {showDeleteButton && (
-          <button onClick={() => removeBlog(blog)}>remove</button>
-        )}
-      </Togglable>
+      <div>
+        <a href={blog.url}>{blog.url}</a>
+      </div>
+      <div>
+        <p>
+          likes {blog.likes}
+          {user && <button onClick={() => updateLikes(blog)}>like</button>}
+        </p>
+      </div>
+      <div>
+        <p>Added by {blog.user.name}</p>
+      </div>
+      {isOwner && <button onClick={handleRemoveAndNavigate}>remove</button>}
     </div>
   )
 }

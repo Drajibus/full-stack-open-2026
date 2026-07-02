@@ -1,12 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 import BlogList from './components/BlogList'
 
@@ -42,6 +36,7 @@ const App = () => {
   }, [])
 
   const handleLogin = async (event) => {
+    // A voir si je peux l'enlever ? il est déjà appliqué dans LoginForm
     event.preventDefault()
     try {
       const user = await loginService.login({ username, password })
@@ -136,8 +131,9 @@ const App = () => {
         await blogService.remove(blogObject.id)
 
         setBlogs(blogs.filter((b) => b.id !== blogObject.id))
-      } catch {
+      } catch (exception) {
         console.log('Removing blog failed')
+        throw exception
       }
     }
   }
@@ -157,6 +153,17 @@ const App = () => {
         )}
       </div>
       <Routes>
+        <Route
+          path='/blogs/:id'
+          element={
+            <Blog
+              blogs={blogs}
+              user={user}
+              updateLikes={updateLikes}
+              removeBlog={removeBlog}
+            />
+          }
+        ></Route>
         <Route
           path='/'
           element={
