@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
+import { Container } from '@mui/material'
+
 import BlogList from './components/BlogList'
 
 import Blog from './components/Blog'
@@ -135,7 +137,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <Container>
       <Notification notification={notification} />
       <Router>
         <div>
@@ -197,7 +199,7 @@ const App = () => {
           ></Route>
         </Routes>
       </Router>
-    </>
+    </Container>
   )
 
   // return (

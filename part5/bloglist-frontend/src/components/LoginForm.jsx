@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button } from '@mui/material'
 
 const LoginForm = ({
   handleSubmit,
@@ -24,27 +25,21 @@ const LoginForm = ({
     <div>
       <h1>Log in to application</h1>
       <form onSubmit={handleSubmitAndNavigate}>
+        <TextField
+          label='username'
+          value={username}
+          onChange={handleUsernameChange}
+        />
+        <TextField
+          label='password'
+          value={password}
+          onChange={handlePasswordChange}
+        />
         <div>
-          <label>
-            username
-            <input
-              type='text'
-              value={username}
-              onChange={handleUsernameChange}
-            />
-          </label>
+          <Button type='submit' variant='contained' style={{ marginTop: 10 }}>
+            log in
+          </Button>
         </div>
-        <div>
-          <label>
-            password
-            <input
-              type='password'
-              value={password}
-              onChange={handlePasswordChange}
-            />
-          </label>
-        </div>
-        <button type='submit'>log in</button>
       </form>
     </div>
   )
