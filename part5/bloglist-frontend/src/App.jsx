@@ -135,66 +135,69 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <div>
-        <Link style={{ padding: '0px 5px' }} to='/'>
-          blogs
-        </Link>
-
-        {user === null ? (
-          <Link style={{ padding: '5 px' }} to='/login'>
-            login
+    <>
+      <Notification notification={notification} />
+      <Router>
+        <div>
+          <Link style={{ padding: '0px 5px' }} to='/'>
+            blogs
           </Link>
-        ) : (
-          <>
-            <Link style={{ padding: '0px 5px' }} to='/add'>
-              new blog
+
+          {user === null ? (
+            <Link style={{ padding: '5 px' }} to='/login'>
+              login
             </Link>
-            <button onClick={handleLogout}>logout</button>
-          </>
-        )}
-      </div>
-      <Routes>
-        <Route
-          path='/blogs/:id'
-          element={
-            <Blog
-              blogs={blogs}
-              user={user}
-              updateLikes={updateLikes}
-              removeBlog={removeBlog}
-            />
-          }
-        ></Route>
-        <Route
-          path='/'
-          element={
-            <BlogList
-              blogs={blogs}
-              user={user}
-              updateLikes={updateLikes}
-              removeBlog={removeBlog}
-            />
-          }
-        ></Route>
-        <Route
-          path='/login'
-          element={
-            <LoginForm
-              username={username}
-              password={password}
-              handleUsernameChange={({ target }) => setUsername(target.value)}
-              handlePasswordChange={({ target }) => setPassword(target.value)}
-              handleSubmit={handleLogin}
-            />
-          }
-        ></Route>
-        <Route
-          path='/add'
-          element={<CreateForm createBlog={addBlog} user={user} />}
-        ></Route>
-      </Routes>
-    </Router>
+          ) : (
+            <>
+              <Link style={{ padding: '0px 5px' }} to='/add'>
+                new blog
+              </Link>
+              <button onClick={handleLogout}>logout</button>
+            </>
+          )}
+        </div>
+        <Routes>
+          <Route
+            path='/blogs/:id'
+            element={
+              <Blog
+                blogs={blogs}
+                user={user}
+                updateLikes={updateLikes}
+                removeBlog={removeBlog}
+              />
+            }
+          ></Route>
+          <Route
+            path='/'
+            element={
+              <BlogList
+                blogs={blogs}
+                user={user}
+                updateLikes={updateLikes}
+                removeBlog={removeBlog}
+              />
+            }
+          ></Route>
+          <Route
+            path='/login'
+            element={
+              <LoginForm
+                username={username}
+                password={password}
+                handleUsernameChange={({ target }) => setUsername(target.value)}
+                handlePasswordChange={({ target }) => setPassword(target.value)}
+                handleSubmit={handleLogin}
+              />
+            }
+          ></Route>
+          <Route
+            path='/add'
+            element={<CreateForm createBlog={addBlog} user={user} />}
+          ></Route>
+        </Routes>
+      </Router>
+    </>
   )
 
   // return (
