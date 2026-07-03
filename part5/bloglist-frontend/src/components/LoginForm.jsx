@@ -25,21 +25,22 @@ const LoginForm = ({
     <div>
       <h1>Log in to application</h1>
       <form onSubmit={handleSubmitAndNavigate}>
-        <TextField
-          label='username'
-          value={username}
-          onChange={handleUsernameChange}
-        />
-        <TextField
-          label='password'
-          value={password}
-          onChange={handlePasswordChange}
-        />
         <div>
-          <Button type='submit' variant='contained' style={{ marginTop: 10 }}>
-            log in
-          </Button>
+          <TextField
+            label='username'
+            value={username}
+            onChange={handleUsernameChange}
+          />
+          <TextField
+            label='password'
+            value={password}
+            onChange={handlePasswordChange}
+            style={{ marginLeft: 10 }}
+          />
         </div>
+        <Button type='submit' variant='contained' style={{ marginTop: 10 }}>
+          log in
+        </Button>
       </form>
     </div>
   )
