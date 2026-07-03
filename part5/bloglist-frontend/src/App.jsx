@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
-import { Container } from '@mui/material'
+import { Container, AppBar, Toolbar, Button, Typography } from '@mui/material'
 
 import BlogList from './components/BlogList'
 
@@ -47,16 +47,16 @@ const App = () => {
       setPassword('')
 
       setNotification({
-        message: `Connected as ${user.username}`,
-        notificationClass: 'successAlert',
+        text: `Connected as ${user.username}`,
+        type: 'success',
       })
       setTimeout(() => {
         setNotification(null)
       }, 5000)
     } catch (exception) {
       setNotification({
-        message: 'Wrong username or password',
-        notificationClass: 'error',
+        text: 'Wrong username or password',
+        type: 'error',
       })
       setTimeout(() => {
         setNotification(null)
@@ -70,8 +70,8 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
     setNotification({
-      message: 'Successfully logged out',
-      notificationClass: 'successAlert',
+      text: 'Successfully logged out',
+      type: 'success',
     })
     setTimeout(() => {
       setNotification(null)
@@ -85,16 +85,16 @@ const App = () => {
       setBlogs(blogs.concat(returnedBlog))
 
       setNotification({
-        message: `New blog created! ${returnedBlog.title} by ${returnedBlog.author}`,
-        notificationClass: 'successAlert',
+        text: `New blog created! ${returnedBlog.title} by ${returnedBlog.author}`,
+        type: 'success',
       })
       setTimeout(() => {
         setNotification(null)
       }, 5000)
     } catch (exception) {
       setNotification({
-        message: 'Failed to create new blog',
-        notificationClass: 'error',
+        text: 'Failed to create new blog',
+        type: 'error',
       })
       setTimeout(() => {
         setNotification(null)
@@ -136,28 +136,46 @@ const App = () => {
     }
   }
 
-  return (
-    <Container>
-      <Notification notification={notification} />
-      <Router>
-        <div>
-          <Link style={{ padding: '0px 5px' }} to='/'>
-            blogs
-          </Link>
+  const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
-          {user === null ? (
-            <Link style={{ padding: '5 px' }} to='/login'>
-              login
-            </Link>
-          ) : (
-            <>
-              <Link style={{ padding: '0px 5px' }} to='/add'>
-                new blog
-              </Link>
-              <button onClick={handleLogout}>logout</button>
-            </>
-          )}
-        </div>
+  return (
+    <Router>
+      <Container>
+        <AppBar position='static'>
+          <Toolbar>
+            <Typography
+              variant='h6'
+              noWrap
+              component='div'
+              sx={{ flexGrow: 1 }}
+            >
+              Blog App
+            </Typography>
+
+            <Button color='inherit' component={Link} to='/' sx={style}>
+              blogs
+            </Button>
+
+            {user === null ? (
+              <Button color='inherit' component={Link} to='/login' sx={style}>
+                login
+              </Button>
+            ) : (
+              <>
+                <Button color='inherit' component={Link} to='/add' sx={style}>
+                  new blog
+                </Button>
+
+                <Button color='inherit' onClick={handleLogout} sx={style}>
+                  logout
+                </Button>
+              </>
+            )}
+          </Toolbar>
+        </AppBar>
+
+        <Notification notification={notification} />
+
         <Routes>
           <Route
             path='/blogs/:id'
@@ -198,8 +216,8 @@ const App = () => {
             element={<CreateForm createBlog={addBlog} user={user} />}
           ></Route>
         </Routes>
-      </Router>
-    </Container>
+      </Container>
+    </Router>
   )
 
   // return (
