@@ -73,10 +73,11 @@ describe("Blog app", () => {
   }) => {
     await page.getByText("Canonical string reduction").click();
 
-    expect(page.getByRole("heading")).toContainText(
-      "Canonical string reduction",
-    );
-    expect(page.getByRole("heading")).toContainText("Edsger W. Dijkstra");
+    expect(
+      page.getByRole("heading", { name: "Canonical string reduction" }),
+    ).toBeVisible();
+
+    expect(page.getByText("Edsger W. Dijkstra")).toBeVisible();
 
     expect(
       page.getByRole("link", {
@@ -84,7 +85,7 @@ describe("Blog app", () => {
       }),
     ).toBeVisible();
 
-    expect(page.getByText("likes 0")).toBeVisible();
+    expect(page.getByText("0 likes")).toBeVisible();
     expect(page.getByText("Added by Matti Luukkainen")).toBeVisible();
 
     await expect(page.getByRole("button", { name: "like" })).not.toBeVisible();
@@ -166,7 +167,7 @@ describe("Blog app", () => {
 
       await page.getByRole("button", { name: "like" }).click();
 
-      expect(page.getByText("likes 1")).toBeVisible();
+      expect(page.getByText("1 likes")).toBeVisible();
     });
 
     test("A logged-in user can delete a blog", async ({ page }) => {

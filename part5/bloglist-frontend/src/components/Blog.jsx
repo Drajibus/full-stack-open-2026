@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import Togglable from './Togglable'
+import { Card, CardContent, Typography, Button, Link, Box } from '@mui/material'
 
 const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
   const navigate = useNavigate()
@@ -26,26 +26,56 @@ const Blog = ({ blogs, user, updateLikes, removeBlog }) => {
   }
 
   return (
-    <div className='blog'>
-      <div>
-        <h1>
-          {blog.title} by <em>{blog.author}</em>
-        </h1>
-      </div>
-      <div>
-        <a href={blog.url}>{blog.url}</a>
-      </div>
-      <div>
-        <p>
-          likes {blog.likes}
-          {user && <button onClick={() => updateLikes(blog)}>like</button>}
-        </p>
-      </div>
-      <div>
-        <p>Added by {blog.user.name}</p>
-      </div>
-      {isOwner && <button onClick={handleRemoveAndNavigate}>remove</button>}
-    </div>
+    <Card variant='outlined' sx={{ mb: 2, mt: 2, borderRadius: 2 }}>
+      <CardContent>
+        <Typography variant='h4' sx={{ fontWeight: 'normal', mb: 1 }}>
+          {blog.title}
+        </Typography>
+
+        <Typography variant='body1' color='text.secondary' sx={{ mb: 1 }}>
+          by {blog.author}
+        </Typography>
+        <Typography variant='body1' sx={{ mb: 1 }}>
+          <Link
+            href={blog.url}
+            target='_blank'
+            rel='noopener noreferrer'
+            underline='always'
+          >
+            {blog.url}
+          </Link>
+        </Typography>
+        <Typography variant='body1' color='text.secondary' sx={{ mb: 2 }}>
+          Added by {blog.user.name}
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography variant='body1' sx={{ fontWeight: 500 }}>
+            {blog.likes} likes
+          </Typography>
+
+          {user && (
+            <Button
+              variant='outlined'
+              size='medium'
+              onClick={() => updateLikes(blog)}
+            >
+              Like
+            </Button>
+          )}
+
+          {isOwner && (
+            <Button
+              variant='outlined'
+              color='error'
+              size='medium'
+              onClick={handleRemoveAndNavigate}
+            >
+              Remove
+            </Button>
+          )}
+        </Box>
+      </CardContent>
+    </Card>
   )
 }
 
